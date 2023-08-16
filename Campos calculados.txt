@@ -1,0 +1,49 @@
+
+Origem do produto no Cadastro dos livros ICMS TGFLIV
+#type.sql#
+SELECT
+
+CASE
+
+WHEN PRO.ORIGPROD = 0 THEN PRO.ORIGPROD || ' - ' || 'Nacional, exceto as indicadas nos códigos 3, 4, 5 e 8'
+WHEN PRO.ORIGPROD = 1 THEN PRO.ORIGPROD || ' - ' ||'Estrangeira - Importação direta, exceto a indicada no código 6' 
+WHEN PRO.ORIGPROD = 2 THEN PRO.ORIGPROD || ' - ' ||'Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7'
+WHEN PRO.ORIGPROD = 3 THEN PRO.ORIGPROD || ' - ' ||'Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% (quarenta por cento) e inferior ou igual a 70% (setenta por cento)'
+WHEN PRO.ORIGPROD = 4 THEN PRO.ORIGPROD || ' - ' ||'Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam o Decreto-Lei no 288/67, e as Leis nos 8.248/91, 8.387/91, 10.176/01 e 11.484/07'
+WHEN PRO.ORIGPROD = 5 THEN PRO.ORIGPROD || ' - ' ||'Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40% (quarenta por cento)'
+WHEN PRO.ORIGPROD = 6 THEN PRO.ORIGPROD || ' - ' ||'Estrangeira - Importação direta, sem similar nacional, constante em lista de Resolução CAMEX e gás natural'
+WHEN PRO.ORIGPROD = 7 THEN PRO.ORIGPROD || ' - ' ||'Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista de Resolução CAMEX e gás natural'
+WHEN PRO.ORIGPROD = 8 THEN PRO.ORIGPROD || ' - ' ||'Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70% (setenta por cento)'
+ELSE '' END AS ORIGEM_PROD
+
+FROM TGFPRO PRO 
+
+ WHERE PRO.CODPROD = (CASE WHEN TGFLIV.ORIGEM IN ('F', 'C') THEN NULL
+									  ELSE (SELECT CODPROD 
+											FROM TGFITE ITE 
+											WHERE ITE.NUNOTA = TGFLIV.NUNOTA 
+												AND ITE.SEQUENCIA = TGFLIV.SEQUENCIA) 
+END)
+
+
+
+
+
+
+
+Observação Nota na TGFFIN
+#type.sql#
+							SELECT OBSERVACAO
+							FROM TGFCAB CAB
+                                                        WHERE TGFFIN.NUNOTA = CAB.NUNOTA
+
+
+inscrição estudal parceiro Portais na TGFCAB 
+
+
+#type.sql#
+SELECT IDENTINSCESTAD 
+
+ FROM TGFPAR PAR
+
+ WHERE TGFCAB.CODPARC = PAR.CODPARC
